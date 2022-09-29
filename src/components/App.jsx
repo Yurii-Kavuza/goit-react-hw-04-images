@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { nanoid } from 'nanoid';
-import initialContacts from '../data/contacts.json';
 import Section from './Section';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
