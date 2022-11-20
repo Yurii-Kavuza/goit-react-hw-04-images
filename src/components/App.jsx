@@ -1,18 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import { nanoid } from 'nanoid';
-import Section from './Section';
-import ContactForm from './ContactForm';
-import ContactList from './ContactList';
-import Filter from './Filter';
 import SearchBar from './SearchBar';
 import { Container } from './App.styled';
-
-const API_KEY = '29343329-eb32098cf47fcc64118c9b881';
-const OPTIONS = 'image_type=photo&orientation=horizontal&per_page=12';
-
-axios.defaults.baseURL = 'https://pixabay.com/api/';
+import * as API from 'services/api';
+import ImageGallery from './ImageGallery';
+import Button from './Button';
 
 class App extends React.Component {
   static propTypes = {
@@ -29,26 +21,49 @@ class App extends React.Component {
   state = {
     images: [],
     search: '',
+    isLoading: false,
+    error: null,
+    isButtonShown: false,
   };
 
-  async componentDidMount() {
-    const response = await axios.get(
-      `?q=${this.state.search}&page=1&key=${API_KEY}&${OPTIONS}`
-    );
-    this.setState({ images: response.data });
-  }
+  // async componentDidMount() {
+  //   const response = await axios.get(
+  //     `?q=${this.state.search}&page=1&key=${API_KEY}&${OPTIONS}`
+  //   );
+  //   this.setState({ images: response.data });
+
+  // }
 
   componentDidUpdate(prevProps, prevState) {}
 
-  formSubmitHandler(searchQuery) {
-    console.log(searchQuery);
-  }
+  formSubmitHandler = async searchQuery => {
+    try {
+      this.setState({ isLoading: true });
+      const { hits } = await API.fetchImages(searchQuery);
+      this.setState(state => ({
+        images: [...state.images, ...hits],
+        search: searchQuery.search,
+        isButtonShown: true,
+      }));
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
 
   render() {
-    const { filter } = this.state;
+    const { isLoading, images, isButtonShown } = this.state;
     return (
       <Container>
         <SearchBar onSubmit={this.formSubmitHandler} />
+        {images.length > 0 && <ImageGallery images={images} />}
+        {isLoading && <div>Loading...</div>}
+        {isButtonShown && (
+          <div>
+            <Button text="Load more" />
+          </div>
+        )}
       </Container>
     );
   }

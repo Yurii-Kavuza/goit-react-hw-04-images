@@ -10,6 +10,7 @@ import {
   Input,
 } from './SearchBar.styled';
 import { AiOutlineSearch } from 'react-icons/ai';
+import { IconContext } from 'react-icons';
 
 class SearchBar extends Component {
   schema = yup.object().shape({
@@ -18,9 +19,8 @@ class SearchBar extends Component {
 
   initialValues = { search: '' };
 
-  handleSubmit = (values, { resetForm }) => {
-    this.props.onSubmit(values);
-    resetForm();
+  handleSubmit = async (values, actions) => {
+    await this.props.onSubmit(values);
   };
 
   render() {
@@ -33,7 +33,9 @@ class SearchBar extends Component {
         >
           <FormBox autoComplete="off">
             <Button type="submit">
-              <AiOutlineSearch />
+              <IconContext.Provider value={{ size: '2em' }}>
+                <AiOutlineSearch />
+              </IconContext.Provider>
             </Button>
 
             <Input
