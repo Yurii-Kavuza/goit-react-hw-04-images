@@ -1,14 +1,7 @@
 import { Component } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import {
-  Button,
-  ButtonLabel,
-  FormError,
-  FormBox,
-  Header,
-  Input,
-} from './SearchBar.styled';
+import { Button, FormError, FormBox, Header, Input } from './SearchBar.styled';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { IconContext } from 'react-icons';
 

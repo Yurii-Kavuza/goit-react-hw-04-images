@@ -5,7 +5,6 @@ const START_PAGE = 1;
 const IMAGE_TYPE = 'photo';
 const ORIENTATION = 'horizontal';
 const PER_PAGE = 12;
-const OPTIONS = 'image_type=photo&orientation=horizontal&per_page=12';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
