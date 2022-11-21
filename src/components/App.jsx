@@ -1,56 +1,92 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SearchBar from './SearchBar';
-import { Container } from './App.styled';
 import * as API from 'services/api';
+import { Container } from './App.styled';
+import { Box } from './Box/Box';
+import SearchBar from './SearchBar';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
 
 class App extends React.Component {
-  static propTypes = {
-    contacts: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        number: PropTypes.string.isRequired,
-      })
-    ),
-    filter: PropTypes.string,
-  };
 
   state = {
     images: [],
+    totalImages: 0,
     search: '',
     isLoading: false,
     error: null,
     isButtonShown: false,
+    page: 1,
   };
 
-  // async componentDidMount() {
-  //   const response = await axios.get(
-  //     `?q=${this.state.search}&page=1&key=${API_KEY}&${OPTIONS}`
-  //   );
-  //   this.setState({ images: response.data });
-
-  // }
-
-  componentDidUpdate(prevProps, prevState) {}
+  setDefaultData = () => {
+    this.setState({
+      images: [],
+      totalImages: 0,
+      search: '',
+      isLoading: false,
+      error: null,
+      isButtonShown: false,
+      page: 1,
+    });
+  };
 
   formSubmitHandler = async searchQuery => {
+    this.setDefaultData();
+    const { search } = searchQuery;
     try {
       this.setState({ isLoading: true });
-      const { hits } = await API.fetchImages(searchQuery);
+      const { hits, totalHits } = await API.fetchImages(search);
       this.setState(state => ({
-        images: [...state.images, ...hits],
-        search: searchQuery.search,
-        isButtonShown: true,
+        images: [...hits],
+        search: search,
+        page: 1,
+        totalImages: totalHits,
       }));
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
-      this.setState({ isLoading: false });
+      this.setState({
+        isLoading: false,
+      });
     }
   };
+
+  showMorePictures = async () => {
+    const { search, page } = this.state;
+    try {
+      this.setState({ isLoading: true });
+      const { hits } = await API.fetchImages(search, page);
+      this.setState(state => ({
+        images: [...state.images, ...hits],
+      }));
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({
+        isLoading: false,
+      });
+    }
+  };
+
+  loadMoreHandler = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
+
+  checkButtonShow = () => {
+    const { totalImages, page } = this.state;
+    return API.PER_PAGE * page < totalImages;
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.page !== this.state.page) {
+      this.showMorePictures();
+      this.setState({ isButtonShown: this.checkButtonShow() });
+    }
+    if (prevState.search !== this.state.search) {
+      this.setState({ isButtonShown: this.checkButtonShow() });
+    }
+  }
 
   render() {
     const { isLoading, images, isButtonShown } = this.state;
@@ -60,9 +96,9 @@ class App extends React.Component {
         {images.length > 0 && <ImageGallery images={images} />}
         {isLoading && <div>Loading...</div>}
         {isButtonShown && (
-          <div>
-            <Button text="Load more" />
-          </div>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Button text="Load more" buttonHandler={this.loadMoreHandler} />
+          </Box>
         )}
       </Container>
     );
