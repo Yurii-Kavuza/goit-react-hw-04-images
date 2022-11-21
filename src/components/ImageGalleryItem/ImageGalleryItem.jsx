@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { ListItem, ListItemImage } from './ImageGalleryItem.styled';
 
 const ImageGalleryItem = ({ large, preview, desc }) => {
