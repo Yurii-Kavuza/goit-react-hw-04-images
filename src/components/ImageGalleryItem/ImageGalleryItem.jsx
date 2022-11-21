@@ -13,4 +13,14 @@ const ImageGalleryItem = ({ large, preview, desc }) => {
   );
 };
 
+ImageGalleryItem.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      large: PropTypes.string.isRequired,
+      preview: PropTypes.string.isRequired,
+      desc: PropTypes.string.isRequired,
+    })
+  ),
+};
+
 export default ImageGalleryItem;

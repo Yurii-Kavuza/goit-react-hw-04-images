@@ -8,6 +8,22 @@ import ImageGallery from './ImageGallery';
 import Button from './Button';
 
 class App extends React.Component {
+  static propTypes = {
+    images: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        largeImageURL: PropTypes.string.isRequired,
+        previewURL: PropTypes.string.isRequired,
+        tags: PropTypes.string.isRequired,
+      })
+    ),
+    totalImages: PropTypes.number,
+    search: PropTypes.string.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+    isButtonShown: PropTypes.bool.isRequired,
+    page: PropTypes.number.isRequired,
+  };
 
   state = {
     images: [],
