@@ -3,7 +3,7 @@ import { List } from './ImageGallery.styled';
 
 const { default: ImageGalleryItem } = require('components/ImageGalleryItem');
 
-const ImageGallery = ({ images }) => (
+const ImageGallery = ({ images, setImage }) => (
   <List>
     {images.map(({ id, largeImageURL, previewURL, tags }) => (
       <ImageGalleryItem
@@ -11,6 +11,7 @@ const ImageGallery = ({ images }) => (
         preview={previewURL}
         large={largeImageURL}
         desc={tags}
+        setImage={setImage}
       />
     ))}
   </List>
@@ -19,12 +20,12 @@ const ImageGallery = ({ images }) => (
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
       largeImageURL: PropTypes.string.isRequired,
       previewURL: PropTypes.string.isRequired,
       tags: PropTypes.string.isRequired,
     })
   ),
-}
+};
 
 export default ImageGallery;

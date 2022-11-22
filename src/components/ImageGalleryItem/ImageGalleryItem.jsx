@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { ListItem, ListItemImage } from './ImageGalleryItem.styled';
 
-const ImageGalleryItem = ({ large, preview, desc }) => {
+const ImageGalleryItem = ({ large, preview, desc, setImage }) => {
   return (
     <ListItem>
       <ListItemImage
@@ -9,6 +9,7 @@ const ImageGalleryItem = ({ large, preview, desc }) => {
         alt={desc}
         data-big-image={large}
         width="480px"
+        onClick={()=>setImage(large, desc)}
       />
     </ListItem>
   );

@@ -2,27 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as API from 'services/api';
 import { Container } from './App.styled';
-import { Box } from './Box/Box';
+import Box from './Box';
 import SearchBar from './SearchBar';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
+import Modal from './Modal';
+import Loader from './Loader';
 
 class App extends React.Component {
   static propTypes = {
     images: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        largeImageURL: PropTypes.string.isRequired,
-        previewURL: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired,
+        largeImageURL: PropTypes.string,
+        previewURL: PropTypes.string,
         tags: PropTypes.string.isRequired,
       })
     ),
     totalImages: PropTypes.number,
-    search: PropTypes.string.isRequired,
-    isLoading: PropTypes.bool.isRequired,
+    search: PropTypes.string,
+    isLoading: PropTypes.bool,
     error: PropTypes.string,
-    isButtonShown: PropTypes.bool.isRequired,
-    page: PropTypes.number.isRequired,
+    isButtonShown: PropTypes.bool,
+    page: PropTypes.number,
   };
 
   state = {
@@ -33,7 +35,20 @@ class App extends React.Component {
     error: null,
     isButtonShown: false,
     page: 1,
+    isModalShown: false,
+    largeImage: null,
+    desc: '',
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.page !== this.state.page) {
+      this.showMorePictures();
+      this.setState({ isButtonShown: this.checkButtonShow() });
+    }
+    if (prevState.search !== this.state.search) {
+      this.setState({ isButtonShown: this.checkButtonShow() });
+    }
+  }
 
   setDefaultData = () => {
     this.setState({
@@ -44,6 +59,9 @@ class App extends React.Component {
       error: null,
       isButtonShown: false,
       page: 1,
+      isModalShown: false,
+      largeImage: null,
+      desc: '',
     });
   };
 
@@ -68,6 +86,14 @@ class App extends React.Component {
     }
   };
 
+  setModalImageData = (largeImage, desc) => {
+    this.setState({ largeImage, desc, isModalShown: true });
+  };
+
+  clearModalImageData = () => {
+    this.setState({ largeImage: null, desc: '' });
+  };
+
   showMorePictures = async () => {
     const { search, page } = this.state;
     try {
@@ -89,32 +115,51 @@ class App extends React.Component {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
+  toggleModal = () => {
+    this.setState(({ isModalShown }) => ({
+      isModalShown: !isModalShown,
+    }));
+  };
+
   checkButtonShow = () => {
     const { totalImages, page } = this.state;
     return API.PER_PAGE * page < totalImages;
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.page !== this.state.page) {
-      this.showMorePictures();
-      this.setState({ isButtonShown: this.checkButtonShow() });
-    }
-    if (prevState.search !== this.state.search) {
-      this.setState({ isButtonShown: this.checkButtonShow() });
-    }
-  }
-
   render() {
-    const { isLoading, images, isButtonShown } = this.state;
+    const { isLoading, images, isButtonShown, isModalShown, largeImage, desc } =
+      this.state;
+    const {
+      formSubmitHandler,
+      loadMoreHandler,
+      toggleModal,
+      clearModalImageData,
+      setModalImageData,
+    } = this;
+
     return (
       <Container>
-        <SearchBar onSubmit={this.formSubmitHandler} />
-        {images.length > 0 && <ImageGallery images={images} />}
-        {isLoading && <div>Loading...</div>}
+        <SearchBar onSubmit={formSubmitHandler} />
+        {images.length > 0 && (
+          <ImageGallery images={images} setImage={setModalImageData} />
+        )}
+        {isLoading && (
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Loader />
+          </Box>
+        )}
         {isButtonShown && (
           <Box display="flex" alignItems="center" justifyContent="center">
-            <Button text="Load more" buttonHandler={this.loadMoreHandler} />
+            <Button text="Load more" buttonHandler={loadMoreHandler} />
           </Box>
+        )}
+        {isModalShown && (
+          <Modal
+            onClose={toggleModal}
+            clearImage={clearModalImageData}
+            largeImage={largeImage}
+            desc={desc}
+          />
         )}
       </Container>
     );
