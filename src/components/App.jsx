@@ -82,7 +82,7 @@ class App extends React.Component {
     const { search, page } = this.state;
     try {
       this.setState({ isLoading: true });
-      const { hits } = await API.fetchImages(search, page);
+      const { hits, totalHits } = await API.fetchImages(search, page);
       this.setState(state => ({
         images: [...state.images, ...hits],
         totalImages: totalHits,
