@@ -41,11 +41,11 @@ class App extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.page !== this.state.page) {
-      this.showMorePictures();
-      this.setState({ isButtonShown: this.checkButtonShow() });
-    }
-    if (prevState.search !== this.state.search) {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.search !== this.state.search
+    ) {
+      this.loadPictures();
       this.setState({ isButtonShown: this.checkButtonShow() });
     }
   }
@@ -67,23 +67,7 @@ class App extends React.Component {
 
   formSubmitHandler = async searchQuery => {
     this.setDefaultData();
-    const { search } = searchQuery;
-    try {
-      this.setState({ isLoading: true });
-      const { hits, totalHits } = await API.fetchImages(search);
-      this.setState(state => ({
-        images: [...hits],
-        search: search,
-        page: 1,
-        totalImages: totalHits,
-      }));
-    } catch (error) {
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({
-        isLoading: false,
-      });
-    }
+    this.setState({ search: searchQuery.search });
   };
 
   setModalImageData = (largeImage, desc) => {
@@ -94,13 +78,14 @@ class App extends React.Component {
     this.setState({ largeImage: null, desc: '' });
   };
 
-  showMorePictures = async () => {
+  loadPictures = async () => {
     const { search, page } = this.state;
     try {
       this.setState({ isLoading: true });
       const { hits } = await API.fetchImages(search, page);
       this.setState(state => ({
         images: [...state.images, ...hits],
+        totalImages: totalHits,
       }));
     } catch (error) {
       this.setState({ error: error.message });
