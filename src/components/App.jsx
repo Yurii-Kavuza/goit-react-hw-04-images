@@ -112,7 +112,7 @@ class App extends React.Component {
   };
 
   checkButtonShow = () => {
-    const { totalImages, page, images } = this.state;
+    const { totalImages, page } = this.state;
     return API.PER_PAGE * page < totalImages;
   };
 
