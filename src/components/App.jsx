@@ -46,7 +46,11 @@ class App extends React.Component {
       prevState.search !== this.state.search
     ) {
       this.loadPictures();
-      this.setState({ isButtonShown: this.checkButtonShow() });
+    }
+    if (prevState.images !== this.state.images) {
+      this.setState({
+        isButtonShown: this.checkButtonShow(),
+      });
     }
   }
 
@@ -87,6 +91,7 @@ class App extends React.Component {
         images: [...state.images, ...hits],
         totalImages: totalHits,
       }));
+      this.setState({ isButtonShown: this.checkButtonShow() });
     } catch (error) {
       this.setState({ error: error.message });
     } finally {
@@ -107,7 +112,7 @@ class App extends React.Component {
   };
 
   checkButtonShow = () => {
-    const { totalImages, page } = this.state;
+    const { totalImages, page, images } = this.state;
     return API.PER_PAGE * page < totalImages;
   };
 
