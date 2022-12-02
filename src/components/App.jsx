@@ -71,6 +71,7 @@ const App = () => {
       setIsButtonShown(checkButtonShow());
     } catch (error) {
       setError(error.message);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -80,11 +81,11 @@ const App = () => {
     if (search !== '') {
       loadPictures();
     }
-  }, [page, search]);
+  }, [page, search, loadPictures]);
 
   useEffect(() => {
     setIsButtonShown(checkButtonShow());
-  }, [images]);
+  }, [images, checkButtonShow]);
 
   return (
     <Container>
