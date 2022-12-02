@@ -50,7 +50,7 @@ const App = () => {
     setDesc('');
   };
 
-  const checkButtonShow = () => {
+  function checkButtonShow () {
     return API.PER_PAGE * page < totalImages;
   };
 
@@ -62,7 +62,11 @@ const App = () => {
     setPage(page + 1);
   };
 
-  const loadPictures = async () => {
+  const logError = () => {
+    console.log(error);
+  };
+
+  async function loadPictures () {
     try {
       setIsLoading(true);
       const { hits, totalHits } = await API.fetchImages(search, page);
@@ -71,7 +75,7 @@ const App = () => {
       setIsButtonShown(checkButtonShow());
     } catch (error) {
       setError(error.message);
-      console.log(error);
+      logError();
     } finally {
       setIsLoading(false);
     }
@@ -81,11 +85,11 @@ const App = () => {
     if (search !== '') {
       loadPictures();
     }
-  }, [page, search, loadPictures]);
+  }, [page, search]);
 
   useEffect(() => {
     setIsButtonShown(checkButtonShow());
-  }, [images, checkButtonShow]);
+  }, [images]);
 
   return (
     <Container>
