@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as API from 'services/api';
 import { Container } from './App.styled';
@@ -50,9 +50,9 @@ const App = () => {
     setDesc('');
   };
 
-  function checkButtonShow () {
+  const checkButtonShow = useCallback(() => {
     return API.PER_PAGE * page < totalImages;
-  };
+  }, [page, totalImages]);
 
   const toggleModal = () => {
     setIsModalShown(!isModalShown);
@@ -62,15 +62,15 @@ const App = () => {
     setPage(page + 1);
   };
 
-  const logError = () => {
+  const logError = useCallback(() => {
     console.log(error);
-  };
+  }, [error]);
 
-  async function loadPictures () {
+  const loadPictures = useCallback(async () => {
     try {
       setIsLoading(true);
       const { hits, totalHits } = await API.fetchImages(search, page);
-      setImages([...images, ...hits]);
+      setImages(state => [...state, ...hits]);
       setTotalImages(totalHits);
       setIsButtonShown(checkButtonShow());
     } catch (error) {
@@ -79,17 +79,19 @@ const App = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [checkButtonShow, logError, page, search]);
 
   useEffect(() => {
+    console.log('First');
     if (search !== '') {
       loadPictures();
     }
   }, [page, search, loadPictures]);
 
   useEffect(() => {
+    console.log('Second');
     setIsButtonShown(checkButtonShow());
-  }, [images,checkButtonShow]);
+  }, [images, checkButtonShow]);
 
   return (
     <Container>
