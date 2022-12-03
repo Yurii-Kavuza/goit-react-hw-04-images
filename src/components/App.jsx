@@ -82,14 +82,12 @@ const App = () => {
   }, [checkButtonShow, logError, page, search]);
 
   useEffect(() => {
-    console.log('First');
     if (search !== '') {
       loadPictures();
     }
   }, [page, search, loadPictures]);
 
   useEffect(() => {
-    console.log('Second');
     setIsButtonShown(checkButtonShow());
   }, [images, checkButtonShow]);
 
