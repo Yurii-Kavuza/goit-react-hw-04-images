@@ -55,7 +55,7 @@ const App = () => {
   }, [page, totalImages]);
 
   const toggleModal = () => {
-    setIsModalShown(!isModalShown);
+    setIsModalShown(state => !state);
   };
 
   const loadMoreHandler = () => {
@@ -81,7 +81,7 @@ const App = () => {
     }
   }, [checkButtonShow, logError, page, search]);
 
-  useEffect(() => {
+  useEffect(() => {    
     if (search !== '') {
       loadPictures();
     }
