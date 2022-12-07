@@ -21,10 +21,8 @@ const App = () => {
 
   const setDefaultData = () => {
     setImages([]);
-    setTotalImages(0);
     setSearch('');
     setIsLoading(false);
-    setError(null);
     setIsButtonShown(false);
     setPage(1);
     setIsModalShown(false);
