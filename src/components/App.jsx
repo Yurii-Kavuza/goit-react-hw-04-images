@@ -11,10 +11,8 @@ import Loader from './Loader';
 
 const App = () => {
   const [images, setImages] = useState([]);
-  const [totalImages, setTotalImages] = useState(0);
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isButtonShown, setIsButtonShown] = useState(false);
   const [page, setPage] = useState(1);
   const [isModalShown, setIsModalShown] = useState(false);
@@ -64,12 +62,11 @@ const App = () => {
         setIsLoading(true);
         const { hits, totalHits } = await API.fetchImages(search, page);
         setImages(state => [...state, ...hits]);
-        setTotalImages(totalHits);
         setIsButtonShown(() => {
           return API.PER_PAGE * page < totalHits;
         });
       } catch (error) {
-        setError(error.message);
+        console.log("error", error.message);
       } finally {
         setIsLoading(false);
       }
