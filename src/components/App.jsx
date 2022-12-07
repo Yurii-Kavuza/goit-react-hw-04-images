@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import * as API from 'services/api';
 import { Container } from './App.styled';
@@ -57,10 +57,6 @@ const App = () => {
   const loadMoreHandler = () => {
     setPage(page + 1);
   };
-
-  const logError = useCallback(() => {
-    console.log(error);
-  }, [error]);
 
   useEffect(() => {
     const loadPictures = async () => {
