@@ -70,11 +70,10 @@ const App = () => {
         setImages(state => [...state, ...hits]);
         setTotalImages(totalHits);
         setIsButtonShown(() => {
-          return API.PER_PAGE * page < totalImages;
+          return API.PER_PAGE * page < totalHits;
         });
       } catch (error) {
         setError(error.message);
-        logError();
       } finally {
         setIsLoading(false);
       }
@@ -82,7 +81,7 @@ const App = () => {
     if (search !== '') {
       loadPictures();
     }
-  }, [page, search, logError, totalImages]);  
+  }, [page, search]);
 
   return (
     <Container>
