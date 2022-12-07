@@ -50,10 +50,6 @@ const App = () => {
     setDesc('');
   };
 
-  const checkButtonShow = useCallback(() => {
-    return API.PER_PAGE * page < totalImages;
-  }, [page, totalImages]);
-
   const toggleModal = () => {
     setIsModalShown(state => !state);
   };
@@ -66,30 +62,27 @@ const App = () => {
     console.log(error);
   }, [error]);
 
-  const loadPictures = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { hits, totalHits } = await API.fetchImages(search, page);
-      setImages(state => [...state, ...hits]);
-      setTotalImages(totalHits);
-      setIsButtonShown(checkButtonShow());
-    } catch (error) {
-      setError(error.message);
-      logError();
-    } finally {
-      setIsLoading(false);
-    }
-  }, [checkButtonShow, logError, page, search]);
-
-  useEffect(() => {    
+  useEffect(() => {
+    const loadPictures = async () => {
+      try {
+        setIsLoading(true);
+        const { hits, totalHits } = await API.fetchImages(search, page);
+        setImages(state => [...state, ...hits]);
+        setTotalImages(totalHits);
+        setIsButtonShown(() => {
+          return API.PER_PAGE * page < totalImages;
+        });
+      } catch (error) {
+        setError(error.message);
+        logError();
+      } finally {
+        setIsLoading(false);
+      }
+    };
     if (search !== '') {
       loadPictures();
     }
-  }, [page, search, loadPictures]);
-
-  useEffect(() => {
-    setIsButtonShown(checkButtonShow());
-  }, [images, checkButtonShow]);
+  }, [page, search, logError, totalImages]);  
 
   return (
     <Container>
